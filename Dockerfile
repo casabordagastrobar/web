@@ -15,19 +15,20 @@ RUN apt-get update && apt-get install -y \
 # Instala Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copia el código del proyecto Laravel
+# Copia el proyecto
 COPY . /var/www/html
-
-# Establece permisos correctos
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html
+WORKDIR /var/www/html
 
 # Instala dependencias de Laravel
-WORKDIR /var/www/html
 RUN composer install --no-dev --optimize-autoloader
 
-# Habilita Apache mod_rewrite
+# Crear carpetas necesarias y dar permisos
+RUN mkdir -p storage/framework/{cache,sessions,views} storage/logs bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 storage bootstrap/cache
+
+# Habilita mod_rewrite de Apache
 RUN a2enmod rewrite
 
-# Configura Apache para Laravel
+# Configura Apache para apuntar a public/
 COPY ./vhost.conf /etc/apache2/sites-available/000-default.conf
