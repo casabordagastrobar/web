@@ -10,7 +10,8 @@ RUN apt-get update && apt-get install -y \
     libpq-dev \
     libxml2-dev \
     curl \
-    && docker-php-ext-install pdo pdo_mysql zip
+    && docker-php-ext-install pdo pdo_pgsql zip
+
 
 # Instala Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
