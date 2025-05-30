@@ -19,13 +19,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . /var/www/html
 WORKDIR /var/www/html
 
-# Instala dependencias y genera tablas necesarias
-RUN composer install --no-dev --optimize-autoloader \
- && php artisan config:clear \
- && php artisan view:clear \
- && php artisan cache:clear \
- && php artisan session:table \
- && php artisan migrate --force
+# Instala dependencias de Laravel
+RUN composer install --no-dev --optimize-autoloader
 
 # Crea carpetas necesarias y aplica permisos
 RUN mkdir -p \
