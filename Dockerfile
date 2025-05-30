@@ -19,12 +19,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . /var/www/html
 WORKDIR /var/www/html
 
-# Instala dependencias de Laravel y limpia caches
-RUN composer install --no-dev --optimize-autoloader \
- && php artisan config:clear \
- && php artisan view:clear \
- && php artisan cache:clear \
- && mkdir -p \
+# Instala dependencias de Laravel
+RUN composer install --no-dev --optimize-autoloader
+
+# Crea carpetas necesarias y aplica permisos
+RUN mkdir -p \
     storage/framework/cache \
     storage/framework/sessions \
     storage/framework/views \
@@ -35,10 +34,6 @@ RUN composer install --no-dev --optimize-autoloader \
 
 # Habilita mod_rewrite de Apache
 RUN a2enmod rewrite
-
-# Configura Apache para apuntar a public/
-COPY ./vhost.conf /etc/apache2/sites-available/000-default.conf
-
 
 # Configura Apache para apuntar a public/
 COPY ./vhost.conf /etc/apache2/sites-available/000-default.conf
