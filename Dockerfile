@@ -22,10 +22,18 @@ WORKDIR /var/www/html
 # Instala dependencias de Laravel
 RUN composer install --no-dev --optimize-autoloader
 
+&& php artisan config:clear && php artisan view:clear && php artisan cache:clear \
 # Crear carpetas necesarias y dar permisos
-RUN mkdir -p storage/framework/{cache,sessions,views} storage/logs bootstrap/cache \
-    && chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 storage bootstrap/cache
+# Crear carpetas necesarias y dar permisos
+RUN mkdir -p \
+    storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs \
+    bootstrap/cache \
+ && chown -R www-data:www-data /var/www/html \
+ && chmod -R 775 storage bootstrap/cache
+
 
 # Habilita mod_rewrite de Apache
 RUN a2enmod rewrite
